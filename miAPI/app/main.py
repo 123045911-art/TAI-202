@@ -67,3 +67,33 @@ async def agregar_usuarios(usuario:dict):
         "mensaje":"Usuario Agregado",
         "Datos nuevos":usuario
     }
+
+@app.put("/v1/usuarios/{id}", tags=['HTTP CRUD'])
+async def actualizar_usuario_completo(id: int, usuario_actualizado: dict):
+    for index, usr in enumerate(usuarios):
+        if usr["id"] == id:
+            usuario_actualizado["id"] = id 
+            usuarios[index] = usuario_actualizado
+            return {"mensaje": "Usuario actualizado por completo", "datos": usuarios[index]}
+    raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+@app.patch("/v1/usuarios/{id}", tags=['HTTP CRUD'])
+async def actualizar_usuario_parcial(id: int, campos: dict):
+    for usr in usuarios:
+        if usr["id"] == id:
+            usr.update(campos)
+            return {"mensaje": "Usuario actualizado parcialmente", "usuario": usr}
+    
+    raise HTTPException(status_code=404, detail="Usuario no encontrado")
+
+@app.delete("/v1/usuarios/{id}", tags=['HTTP CRUD'])
+async def eliminar_usuario(id: int):
+    for index, usr in enumerate(usuarios):
+        if usr["id"] == id:
+            usuario_eliminado = usuarios.pop(index)
+            return {
+                "mensaje": "Usuario eliminado exitosamente",
+                "usuario_eliminado": usuario_eliminado
+            }
+            
+    raise HTTPException(status_code=404, detail="Usuario no encontrado")
