@@ -6,7 +6,7 @@ from typing import Optional
 #Instancia del servidor
 app= FastAPI(
     title= "Mi primer API",
-    description= "Ivan Isay Guerra L",
+    description= "Ali Daniel Flores García",
     version="1.0"
 )
 
