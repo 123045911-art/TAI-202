@@ -1,30 +1,69 @@
 #importaciones
-from fastapi import FastAPI
+from fastapi import FastAPI, status, HTTPException
 import asyncio
-
+from typing import Optional
 
 #Instancia del servidor
-app= FastAPI()
+app= FastAPI(
+    title= "Mi primer API",
+    description= "Ivan Isay Guerra L",
+    version="1.0"
+)
+
+#TB ficticia
+usuarios=[
+    {"id":1,"nombre":"Fany","edad":21},
+    {"id":2,"nombre":"Aly","edad":21},
+    {"id":3,"nombre":"Dulce","edad":21},
+]
 
 #Endpoints
 @app.get("/")
 async def holamundo():
-    return {"message": "Hola Mundo FastAPI"}
-
-#Endpoint con parametro obligatorio
-@app.get("/usuarios/{usuario_id}")
-async def obtener_usuario(usuario_id: int):
-    return {"usuario_id": usuario_id, "mensaje": "Usuario encontrado"}
-
-#Endpoint con parametro opcional
-@app.get("/buscar")
-async def buscar_producto(nombre: str = "Todos"):
-    return {"criterio": nombre, "resultado": "Lista de productos"}
+    return {"mensaje":"Hola Mundo FastAPI"}
 
 @app.get("/bienvenido")
 async def bienvenido():
     await asyncio.sleep(5)
     return {
-        "mensaje":"bienvenido a FastAPI",
-        "estatus":"200"
+        "mensaje":"Bienvenido a FastAPI",
+        "estatus":"200",
+        }
+
+@app.get("/v1/parametroOb/{id}",tags=['Parametro Obligatorio'])
+async def consultauno(id:int):
+    return {"mensaje":"usuario encontrado",
+            "usuario":id,
+            "status":"200" }
+
+@app.get("/v1/parametroOp/",tags=['Parametro Opcional'])
+async def consultatodos(id:Optional[int]=None):
+    if id is not None:
+        for usuarioK in usuarios:
+            if usuarioK["id"] == id:
+                return{"mensaje":"usuario encontrado","usuario":usuarioK}
+        return{"mensaje":"usuario no encontrado","status":"200"}
+    else:
+        return {"mensaje":"No se proporciono id","status":"200"}
+    
+@app.get("/v1/usuarios/",tags=['HTTP CRUD'])
+async def leer_usuarios():
+    return {
+        "total":len(usuarios),
+        "usuarios":usuarios,
+        "status":"200"
+    }
+
+@app.post("/v1/usuarios/",tags=['HTTP CRUD'])
+async def agregar_usuarios(usuario:dict):
+    for usr in usuarios:
+        if usr["id"] == usuario.get("id"):
+            raise HTTPException(
+                status_code=400,
+                detail="El usuario con este ID ya existe"
+            )
+    usuarios.append(usuario)
+    return {
+        "mensaje":"Usuario Agregado",
+        "Datos nuevos":usuario
     }
