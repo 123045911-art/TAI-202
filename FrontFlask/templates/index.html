@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Usuarios</title>
+    <style>
+        /* Un poco de CSS básico para que la tabla no se vea amontonada */
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        table { border-collapse: collapse; width: 50%; margin-top: 20px; }
+        th, td { border: 1px solid black; padding: 10px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .formulario { margin-bottom: 30px; padding: 15px; border: 1px solid #ccc; width: 50%; }
+    </style>
+</head>
+<body>
+
+    <h1>Sistema de Usuarios</h1>
+
+    <div class="formulario">
+        <h3>Agregar Nuevo Usuario</h3>
+        <form action="/crear" method="POST">
+            <label for="id">ID:</label>
+            <input type="number" name="id" required>
+            
+            <label for="nombre">Nombre:</label>
+            <input type="text" name="nombre" required>
+            
+            <label for="edad">Edad:</label>
+            <input type="number" name="edad" required>
+            
+            <button type="submit">Agregar Usuario</button>
+        </form>
+    </div>
+
+    <h3>Lista de Usuarios Actuales</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Nombre</th>
+                <th>Edad</th>
+                <th>Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for usuario in usuarios %}
+            <tr>
+                <td>{{ usuario.id }}</td>
+                <td>{{ usuario.nombre }}</td>
+                <td>{{ usuario.edad }}</td>
+                <td>
+                    <a href="/eliminar/{{ usuario.id }}">
+                        <button style="color: red;">Eliminar</button>
+                    </a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4">No hay usuarios registrados o la API está apagada.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
